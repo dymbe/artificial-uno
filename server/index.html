@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Henlo</title>
+</head>
+<body>
+<h1>YOOOOOOO</h1>
+<ul id="list"></ul>
+<script>
+    const evtSource = new EventSource("/listen?alias=erik");
+    evtSource.onmessage = (event) => {
+      const newElement = document.createElement("li");
+      const eventList = document.getElementById("list");
+
+      newElement.textContent = `message: ${event.data}`;
+      console.log(event)
+      eventList.appendChild(newElement);
+    }
+
+</script>
+</body>
+</html>
