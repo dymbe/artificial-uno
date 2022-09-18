@@ -69,18 +69,22 @@ def play_card():
         unoservice.lock.release()
 
 
+@app.route("/partial-state/<alias>", methods=["GET"])
+def partial_state(alias):
+    try:
+        unoservice.lock.acquire()
+        player_idx = unoservice.player_aliases.index(alias)
+        state = unoservice.get_partial_game_state(player_idx)
+        return state
+    finally:
+        unoservice.lock.release()
+
+
 def format_sse(data: str, event=None) -> str:
     msg = f"data: {data}\n\n"
     if event is not None:
         msg = f"event: {event}\n{msg}"
     return msg
-
-
-@app.route("/ping")
-def ping():
-    msg = format_sse(data="pong")
-    announcer.announce(msg=msg)
-    return {}, 200
 
 
 @app.route("/listen", methods=["GET"])

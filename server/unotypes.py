@@ -37,6 +37,15 @@ class Sign(str, Enum):
                 self.is_wild())
 
 
+def card_from_dict(input_dict):
+    color_field = input_dict["color"]
+    if color_field is None:
+        color = None
+    else:
+        color = Color(color_field)
+    return Card(sign=Sign(input_dict["sign"]), color=color)
+
+
 @dataclass(frozen=True)
 class Card:
     sign: Sign
@@ -72,6 +81,19 @@ class ChallengePlusFour:
 
 
 Move = PlayCard | DrawCard | ChallengePlusFour
+
+
+def state_from_dict(input_dict):
+    return PartialGameState(
+        game_started=input_dict["game_started"],
+        discard_pile=[card_from_dict(card_dict) for card_dict in input_dict["discard_pile"]],
+        player_aliases=input_dict["player_aliases"],
+        hand=[card_from_dict(card_dict) for card_dict in input_dict["hand"]],
+        cards_left=input_dict["cards_left"],
+        current_player_idx=input_dict["current_player_idx"],
+        direction=input_dict["direction"],
+        plus_twos_played=input_dict["plus_twos_played"],
+    )
 
 
 @dataclass(frozen=True)
