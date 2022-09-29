@@ -3,7 +3,7 @@ from flask import Flask, Response, request, send_file
 from messageannouncer import MessageAnnouncer
 from unoservice import UnoService
 from unotypes import *
-from exceptions import *
+from unoexceptions import *
 
 app = Flask(__name__)
 announcer = MessageAnnouncer()
@@ -51,19 +51,32 @@ def play_card():
     color = Color(body["card"]["color"])
     card = Card(sign, color)
     move = PlayCard(card)
+    return make_move(alias, move, f"{card} played by {alias}")
 
+
+@app.route("/draw-card", methods=["POST"])
+def draw_card():
+    body = request.json
+    alias = body["alias"]
+    move = DrawCard()
+    return make_move(alias, move, f"Card drawn by {alias}")
+
+
+def make_move(alias, move, message):
     try:
         unoservice.lock.acquire()
         if alias not in unoservice.player_aliases:
             return {"message": f'"{alias}" not in game'}, 403
         player_idx = unoservice.player_aliases.index(alias)
         unoservice.make_move(player_idx, move)
-        announcer.announce(f"{card} played by {alias}")
+        announcer.announce(message)
         state = unoservice.get_partial_game_state(player_idx)
         return {"state": state}, 200
     except IllegalMoveException as e:
         return {"message": str(e)}, 403
     except GameNotStartedException as e:
+        return {"message": str(e)}, 403
+    except NotYourTurnException as e:
         return {"message": str(e)}, 403
     finally:
         unoservice.lock.release()
@@ -93,6 +106,7 @@ def listen():
 
     def stream():
         messages = announcer.listen()  # returns a queue.Queue
+        messages.put(f"You joined successfully")
         while True:
             msg = messages.get()  # blocks until a new message arrives
             try:
