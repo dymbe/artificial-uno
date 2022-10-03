@@ -27,34 +27,24 @@ class Sign(str, Enum):
     NINE = "NINE"
     SKIP = "SKIP"
     REVERSE = "REVERSE"
-    PLUS_TWO = "PLUS_TWO"
-    PLUS_FOUR = "PLUS_FOUR"
+    DRAW_TWO = "DRAW_TWO"
+    DRAW_FOUR = "DRAW_FOUR"
     CHANGE_COLOR = "CHANGE_COLOR"
 
     @property
     def is_wild(self):
-        return self == Sign.PLUS_FOUR or self == Sign.CHANGE_COLOR
+        return self == Sign.DRAW_FOUR or self == Sign.CHANGE_COLOR
 
     @property
     def is_action(self):
         return (self == Sign.SKIP or
                 self == Sign.REVERSE or
-                self == Sign.PLUS_TWO or
+                self == Sign.DRAW_TWO or
                 self.is_wild)
 
     @property
     def is_number(self):
         return not self.is_wild and not self.is_action
-
-
-def card_from_dict(input_dict):
-    if input_dict:
-        color_field = input_dict["color"]
-        if color_field is None:
-            color = None
-        else:
-            color = Color(color_field)
-        return Card(sign=Sign(input_dict["sign"]), color=color)
 
 
 @dataclass(frozen=True)
@@ -88,7 +78,7 @@ class Card:
 
     def __post_init__(self):
         if not self.is_wild and self.color is None:
-            raise TypeError("Color can only be None for PLUS_FOUR and CHANGE_COLOR cards")
+            raise TypeError("Color can only be None for DRAW_FOUR and CHANGE_COLOR cards")
 
 
 class Hand:
@@ -134,7 +124,7 @@ class DrawPile:
 
         # Add wildcards
         self.cards.extend([Card(sign=Sign.CHANGE_COLOR, color=None) for _ in range(4)])
-        self.cards.extend([Card(sign=Sign.PLUS_FOUR, color=None) for _ in range(4)])
+        self.cards.extend([Card(sign=Sign.DRAW_FOUR, color=None) for _ in range(4)])
 
         random.shuffle(self.cards)
 
@@ -194,21 +184,17 @@ class SkipTurn:
     pass
 
 
-Action = PlayCard | DrawCard | SkipTurn
+@dataclass(frozen=True)
+class AcceptDrawFour:
+    pass
 
 
-# def observation_from_dict(input_dict):
-#     if input_dict:
-#         return Observation(
-#             discard_pile=[card_from_dict(card_dict) for card_dict in input_dict["discard_pile"]],
-#             hand=[card_from_dict(card_dict) for card_dict in input_dict["hand"]],
-#             cards_left=input_dict["cards_left"],
-#             current_player_idx=input_dict["current_player_idx"],
-#             direction=input_dict["direction"],
-#             cards_drawn=input_dict["cards_drawn"],
-#             previously_drawn_card=card_from_dict(input_dict["previously_drawn_card"]),
-#             action_log=[]
-#         )
+@dataclass(frozen=True)
+class ChallengeDrawFour:
+    pass
+
+
+Action = PlayCard | DrawCard | SkipTurn | AcceptDrawFour | ChallengeDrawFour
 
 
 @dataclass(frozen=True)
@@ -220,13 +206,21 @@ class Observation:
     current_agent_idx: int
     direction: Literal[-1, 1]
     previously_drawn_card: Card | None
+    can_challenge_draw_four: bool
+    draw_four_stacked_on: Card | None
+    challenger_idx: int | None
+    revealed_hand_idx: int | None
+    revealed_hand: Hand | None
     scores: list[int]
 
     def action_space(self) -> set[Action]:
-        action_space = set()
         if self.agent_idx != self.current_agent_idx:
-            return action_space
+            return set()
 
+        if self.can_challenge_draw_four:
+            return {AcceptDrawFour(), ChallengeDrawFour()}
+
+        action_space = set()
         playable_cards = []
         if self.previously_drawn_card:
             action_space.add(SkipTurn())
@@ -247,8 +241,12 @@ class Observation:
         return action_space
 
     # Raises exception
-    def assert_valid(self, action):
+    def assert_valid(self, action: Action):
         assert self.agent_idx == self.current_agent_idx
+
+        # Player has to either accept or challenge a played DRAW_FOUR-card
+        assert not (self.can_challenge_draw_four and
+                    action not in [AcceptDrawFour(), ChallengeDrawFour()])
 
         match action:
             case PlayCard(card):
@@ -263,7 +261,10 @@ class Observation:
             case SkipTurn():
                 assert self.previously_drawn_card is not None
 
-    def is_valid_action(self, action) -> bool:
+            case AcceptDrawFour():
+                assert False
+
+    def is_valid_action(self, action: Action) -> bool:
         try:
             self.assert_valid(action)
             return True
@@ -279,9 +280,24 @@ class GameState:
     current_agent_idx: int
     direction: Literal[-1, 1]
     previously_drawn_card: Card | None
+    can_challenge_draw_four: bool
+    draw_four_stacked_on: Card | None
+    challenger_idx: int | None
+    revealed_hand_idx: int | None
+    revealed_hand: Hand | None
     scores: list[int]
 
     def observe(self, agent_idx) -> Observation:
+        if agent_idx == self.current_agent_idx:
+            previously_drawn_card = self.previously_drawn_card
+        else:
+            previously_drawn_card = None
+
+        if self.challenger_idx == agent_idx:
+            revealed_hand = self.revealed_hand
+        else:
+            revealed_hand = None
+
         return deepcopy(Observation(
             agent_idx=agent_idx,
             hand=self.hands[agent_idx],
@@ -289,7 +305,12 @@ class GameState:
             top_card=self.discard_pile.top(),
             current_agent_idx=self.current_agent_idx,
             direction=self.direction,
-            previously_drawn_card=self.previously_drawn_card if agent_idx == self.current_agent_idx else None,
+            previously_drawn_card=previously_drawn_card,
+            can_challenge_draw_four=self.can_challenge_draw_four,
+            draw_four_stacked_on=self.draw_four_stacked_on,
+            challenger_idx=self.challenger_idx,
+            revealed_hand_idx=self.revealed_hand_idx,
+            revealed_hand=revealed_hand,
             scores=self.scores))
 
     def assert_valid(self, agent_idx, action):

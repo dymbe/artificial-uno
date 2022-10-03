@@ -18,6 +18,12 @@ class UnoGame:
         self.current_agent_idx = None
         self.direction = None
         self.previously_drawn_card = None
+        self.can_challenge_draw_four = None
+        self.draw_four_stacked_on = None
+        self.revealed_hand_idx = None
+        self.challenger_idx = None
+        self.revealed_hand = None
+
         self.init_round()
 
     def init_round(self):
@@ -36,6 +42,12 @@ class UnoGame:
         self.direction: Literal[-1, 1] = 1
         self.previously_drawn_card: Card | None = None
 
+        self.can_challenge_draw_four = False
+        self.draw_four_stacked_on: Card | None = None
+        self.challenger_idx: int | None = None
+        self.revealed_hand_idx: int | None = None
+        self.revealed_hand: Hand | None = None
+
         self.log_state()
 
     def gamestate(self) -> GameState:
@@ -46,6 +58,11 @@ class UnoGame:
             current_agent_idx=self.current_agent_idx,
             direction=self.direction,
             previously_drawn_card=self.previously_drawn_card,
+            can_challenge_draw_four=self.can_challenge_draw_four,
+            draw_four_stacked_on=self.draw_four_stacked_on,
+            challenger_idx=self.challenger_idx,
+            revealed_hand_idx=self.revealed_hand_idx,
+            revealed_hand=self.revealed_hand,
             scores=self.scores
         )
 
@@ -55,21 +72,21 @@ class UnoGame:
 
         match action:
             case PlayCard(card):
-                hand.remove(card)
-                self.discard_pile.stack(card)
-
                 increment = 1
                 match card.sign:
                     case Sign.SKIP:
                         increment += 1
                     case Sign.REVERSE:
                         self.direction *= -1
-                    case Sign.PLUS_TWO:
+                    case Sign.DRAW_TWO:
                         increment += 1
                         self.draw_cards(self.current_agent_idx + self.direction, 2)
-                    case Sign.PLUS_FOUR:
-                        increment += 1
-                        self.draw_cards(self.current_agent_idx + self.direction, 4)
+                    case Sign.DRAW_FOUR:
+                        self.can_challenge_draw_four = True
+                        self.draw_four_stacked_on = self.discard_pile.top()
+
+                hand.remove(card)
+                self.discard_pile.stack(card)
 
                 if len(hand) == 0:
                     self.scores[self.current_agent_idx] += sum([len(hand) for hand in self.hands])
@@ -88,13 +105,35 @@ class UnoGame:
             case SkipTurn():
                 self.next_turn()
 
+            case AcceptDrawFour():
+                self.draw_cards(self.current_agent_idx, 4)
+                self.next_turn()
+
+                self.can_challenge_draw_four = False
+                self.draw_four_stacked_on = None
+
+            case ChallengeDrawFour():
+                self.challenger_idx = self.current_agent_idx
+                self.revealed_hand_idx = (self.current_agent_idx - self.direction) % len(self.hands)
+                self.revealed_hand = deepcopy(self.hands[self.revealed_hand_idx])
+
+                if any(card.stacks_on(self.draw_four_stacked_on) for card in self.revealed_hand if not card.is_wild):
+                    self.draw_cards(self.revealed_hand_idx, 4)
+                else:
+                    self.draw_cards(self.current_agent_idx, 6)
+                    self.next_turn()
+
+                self.can_challenge_draw_four = False
+                self.draw_four_stacked_on = None
+
         self.log_state()
 
-    def to_agent_idx(self, idx):
-        return idx % len(self.hands)
+        self.challenger_idx = None
+        self.revealed_hand_idx = None
+        self.revealed_hand = None
 
     def next_turn(self, increment=1):
-        self.current_agent_idx = self.to_agent_idx(self.current_agent_idx + self.direction * increment)
+        self.current_agent_idx = (self.current_agent_idx + self.direction * increment) % len(self.hands)
         self.previously_drawn_card = None
 
     def recycle_discard_pile(self):
@@ -103,7 +142,7 @@ class UnoGame:
         self.discard_pile = DiscardPile(self.discard_pile.top())
 
     def draw_cards(self, idx: int, amount: int):
-        idx = self.to_agent_idx(idx)
+        idx = idx % len(self.hands)
 
         if len(self.draw_pile) < amount:
             self.recycle_discard_pile()
@@ -116,23 +155,7 @@ class UnoGame:
         return cards
 
     def log_state(self):
-        self.state_log.append(deepcopy(GameState(
-            draw_pile=self.draw_pile,
-            hands=self.hands,
-            discard_pile=self.discard_pile,
-            current_agent_idx=self.current_agent_idx,
-            direction=self.direction,
-            previously_drawn_card=self.previously_drawn_card,
-            scores=self.scores)))
-
-    def new_observations(self, agent_idx) -> list[Observation]:
-        for i, state in reversed(list(enumerate(self.state_log))):
-            if state.current_agent_idx == agent_idx:
-                last_unobserved_idx = len(self.state_log) - i - 1
-                break
-        else:
-            last_unobserved_idx = 0
-        return [state.observe(agent_idx) for state in self.state_log[last_unobserved_idx:]]
+        self.state_log.append(deepcopy(self.gamestate()))
 
     def observations(self, agent_idx) -> list[Observation]:
         return [state.observe(agent_idx) for state in self.state_log]

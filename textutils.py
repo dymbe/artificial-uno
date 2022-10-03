@@ -42,9 +42,9 @@ def sign_to_string(sign: Sign):
             return "SK"
         case Sign.REVERSE:
             return "RE"
-        case Sign.PLUS_TWO:
+        case Sign.DRAW_TWO:
             return "+2"
-        case Sign.PLUS_FOUR:
+        case Sign.DRAW_FOUR:
             return "+4"
         case Sign.CHANGE_COLOR:
             return "CC"
@@ -68,7 +68,7 @@ def print_observation(observation: Observation, player_aliases: list[str]):
     print(f"\nTop card: {card_to_string(observation.top_card)}\n")
 
     print(" ".join(["{:>2}".format(i) for i in range(len(observation.hand))]))
-    print(" ".join([card_to_string(card) for card in observation.hand.cards]))
+    print(" ".join([card_to_string(card) for card in observation.hand]))
 
     print("-----------")
 

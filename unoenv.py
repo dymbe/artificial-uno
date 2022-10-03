@@ -26,9 +26,6 @@ class UnoEnvironment:
     def step(self, agent_idx: int, action: Action):
         self.uno_game.step(agent_idx, action)
 
-    def new_observations(self, agent_idx) -> list[Observation]:
-        return self.uno_game.new_observations(agent_idx)
-
     def observations(self, agent_idx) -> list[Observation]:
         return self.uno_game.observations(agent_idx)
 
@@ -48,17 +45,16 @@ class UnoEnvironment:
 
 def main():
     from agents.randomagent import RandomAgent
+    from agents.textagent import TextAgent
 
-    agents = [RandomAgent(f"Player {i}") for i in range(10)]
-    player_aliases = [agent.alias for agent in agents]
+    agents = [TextAgent("Player"), RandomAgent("RandomAgent 1"), RandomAgent("RandomAgent 2")]
+    aliases = [agent.alias for agent in agents]
     env = UnoEnvironment(agents=agents, winning_score=500)
 
-    for i, (agent_idx, agent) in enumerate(env.agent_iter()):
-        observations = env.new_observations(agent_idx)
-        action = agent.get_action(observations, player_aliases=player_aliases)
+    for agent_idx, agent in env.agent_iter():
+        observations = env.observations(agent_idx)
+        action = agent.get_action(observations, aliases=aliases)
         env.step(agent_idx, action)
-
-    print(i)
 
 
 if __name__ == '__main__':
