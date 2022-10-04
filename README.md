@@ -14,4 +14,16 @@ After setting up your virtual environment with the correct Python version, insta
 
 ## Test
 
-Try running `python unoenv.py`. It should start a game with one player agent and two random agents.
+Try running
+
+`python unoenv.py`
+
+from your virtual environment. It should start a game with one player agent and two random agents.
+
+## Creating your own agent
+
+To create your own agent you need to create a class that extends the `UnoAgent` class (see path `agents/unoagent.py`) and implements UnoAgent::get_action.
+
+### Testing your agent
+
+Create an instance of your custom agent class and pass it into an `UnoEnvironment`. See example in `unoenv.py`
