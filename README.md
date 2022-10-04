@@ -22,7 +22,7 @@ from your virtual environment. It should start a game with one player agent and 
 
 ## Creating your own agent
 
-To create your own agent you need to create a class that extends the `UnoAgent` class (see path `agents/unoagent.py`) and implements UnoAgent::get_action. Check out `agents/textagent` and `agents/randomagent.py` for examples.
+To create your own agent you need to create a class that extends the `UnoAgent` class (see `agents/unoagent.py`) and implements UnoAgent::get_action. Check out `agents/textagent.py` and `agents/randomagent.py` for examples.
 
 ### Testing your agent
 
