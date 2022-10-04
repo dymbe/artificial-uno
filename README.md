@@ -12,7 +12,7 @@ After setting up your virtual environment with the correct Python version, insta
 
 `pip install -r requirements.txt`
 
-## Test
+### Test setup
 
 Try running
 
