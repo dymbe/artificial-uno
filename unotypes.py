@@ -199,6 +199,7 @@ Action = PlayCard | DrawCard | SkipTurn | AcceptDrawFour | ChallengeDrawFour
 
 @dataclass(frozen=True)
 class Observation:
+    game_won: bool
     agent_idx: int
     top_card: Card
     hand: Hand
@@ -248,6 +249,7 @@ class Observation:
         if self.can_challenge_draw_four:
             assert action in [AcceptDrawFour(), ChallengeDrawFour()]
         else:
+            assert action not in [AcceptDrawFour(), ChallengeDrawFour()]
             match action:
                 case PlayCard(card):
                     assert card.color is not None
@@ -271,6 +273,7 @@ class Observation:
 
 @dataclass(frozen=True)
 class GameState:
+    game_won: bool
     draw_pile: DrawPile
     hands: list[Hand]
     discard_pile: DiscardPile
@@ -296,6 +299,7 @@ class GameState:
             revealed_hand = None
 
         return deepcopy(Observation(
+            game_won=self.game_won,
             agent_idx=agent_idx,
             hand=self.hands[agent_idx],
             cards_left=[len(hand) for hand in self.hands],

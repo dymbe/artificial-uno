@@ -52,6 +52,7 @@ class UnoGame:
 
     def gamestate(self) -> GameState:
         return GameState(
+            game_won=self.game_won,
             draw_pile=self.draw_pile,
             hands=self.hands,
             discard_pile=self.discard_pile,
