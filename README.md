@@ -1,6 +1,6 @@
 # Artificial-UNO
 
-An UNO-game for AIs
+An UNO-game for AIs. Uses the standard UNO-rules. See https://en.wikipedia.org/wiki/Uno_(card_game)
 
 ## Setup
 
@@ -22,8 +22,12 @@ from your virtual environment. It should start a game with one player agent and 
 
 ## Creating your own agent
 
-To create your own agent you need to create a class that extends the `UnoAgent` class (see path `agents/unoagent.py`) and implements UnoAgent::get_action.
+To create your own agent you need to create a class that extends the `UnoAgent` class (see path `agents/unoagent.py`) and implements UnoAgent::get_action. Check out `agents/textagent` and `agents/randomagent.py` for examples.
 
 ### Testing your agent
 
-Create an instance of your custom agent class and pass it into an `UnoEnvironment`. See example in `unoenv.py`
+Create an instance of your custom agent class and pass it into an `UnoEnvironment`. See example in `unoenv.py`.
+
+## How to participate
+
+Create a pull request which adds your agent to the `agent`-folder before 19th of October 23:59.
