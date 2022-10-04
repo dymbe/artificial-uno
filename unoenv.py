@@ -15,11 +15,7 @@ class UnoEnvironment:
             while not self.uno_game.game_won:
                 idx = self.uno_game.current_agent_idx
                 yield idx, self.agents[idx]
-            scores = self.uno_game.state_log[-1].scores
-
-            print("Scores:")
-            print("\n".join([f"{alias}: {score}" for (alias, score) in zip(self.aliases, self.uno_game.scores)]))
-            print(self.print_winner())
+            self.print_winner()
         except StopIteration:
             pass
 
