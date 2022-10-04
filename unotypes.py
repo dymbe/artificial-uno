@@ -245,24 +245,21 @@ class Observation:
         assert self.agent_idx == self.current_agent_idx
 
         # Player has to either accept or challenge a played DRAW_FOUR-card
-        assert not (self.can_challenge_draw_four and
-                    action not in [AcceptDrawFour(), ChallengeDrawFour()])
+        if self.can_challenge_draw_four:
+            assert action in [AcceptDrawFour(), ChallengeDrawFour()]
+        else:
+            match action:
+                case PlayCard(card):
+                    assert card.color is not None
+                    assert card in self.hand
+                    assert card.stacks_on(self.top_card)
+                    assert self.previously_drawn_card is None or card == self.previously_drawn_card
 
-        match action:
-            case PlayCard(card):
-                assert card.color is not None
-                assert card in self.hand
-                assert card.stacks_on(self.top_card)
-                assert self.previously_drawn_card is None or card == self.previously_drawn_card
+                case DrawCard():
+                    assert self.previously_drawn_card is None
 
-            case DrawCard():
-                assert self.previously_drawn_card is None
-
-            case SkipTurn():
-                assert self.previously_drawn_card is not None
-
-            case AcceptDrawFour():
-                assert False
+                case SkipTurn():
+                    assert self.previously_drawn_card is not None
 
     def is_valid_action(self, action: Action) -> bool:
         try:
