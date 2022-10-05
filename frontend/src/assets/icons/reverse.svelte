@@ -1,0 +1,24 @@
+<script lang="ts">
+    export let color: string | undefined;
+    export let height: string | undefined;
+    export let width: string | undefined;
+</script>
+<svg height={height} width={width} version="1.1" viewBox="0 0 242 362" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(-1379 748.64)">
+  <g transform="matrix(4 0 0 4 -1260 -2077.1)">
+   <g fill-rule="evenodd">
+    <rect x="660" y="332.36" width="60" height="90" rx="10" ry="10" fill="#fff" stroke="#000" stroke-width=".5"/>
+    <rect x="665" y="337.36" width="50" height="80" rx="5" ry="5" fill={color}/>
+    <path d="m705 352.36c-22.091 0-40 17.909-40 40 0 5.5228 4.4772 10 10 10 22.091 0 40-17.909 40-40 0-5.5228-4.4772-10-10-10z" fill="#fff"/>
+   </g>
+   <path d="m690 361.11 2.5 2.5-10 10c-2.5 2.5-2.5 7.5 0 10l15-15 2.5 2.5v-10z" fill={color}/>
+   <path d="m690 393.61-2.5-2.5 10-10c2.5-2.5 2.5-7.5 0-10l-15 15-2.5-2.5v10z" fill={color}/>
+   <g fill="#fff">
+    <path d="m672.5 339.86 1.25 1.25-5 5c-1.25 1.25-1.25 3.75 0 5l7.5-7.5 1.25 1.25v-5z"/>
+    <path d="m672.5 356.11-1.25-1.25 5-5c1.25-1.25 1.25-3.75 0-5l-7.5 7.5-1.25-1.25v5z"/>
+    <path d="m707.5 398.61 1.25 1.25-5 5c-1.25 1.25-1.25 3.75 0 5l7.5-7.5 1.25 1.25v-5z"/>
+    <path d="m707.5 414.86-1.25-1.25 5-5c1.25-1.25 1.25-3.75 0-5l-7.5 7.5-1.25-1.25v5z"/>
+   </g>
+  </g>
+ </g>
+</svg>

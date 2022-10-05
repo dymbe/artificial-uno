@@ -1,0 +1,19 @@
+<script lang="ts">
+    export let color: string | undefined;
+    export let height: string | undefined;
+    export let width: string | undefined;
+</script>
+<svg height={height} width={width} version="1.1" viewBox="0 0 242 362" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(301 748.64)">
+  <g transform="matrix(4 0 0 4 -1260 -2077.1)">
+   <g fill-rule="evenodd">
+    <rect x="240" y="332.36" width="60" height="90" rx="10" ry="10" fill="#fff" stroke="#000" stroke-width=".5"/>
+    <rect x="245" y="337.36" width="50" height="80" rx="5" ry="5" fill={color}/>
+    <path d="m285 352.36c-22.091 0-40 17.909-40 40 0 5.5228 4.4772 10 10 10 22.091 0 40-17.909 40-40 0-5.5228-4.4772-10-10-10z" fill="#fff"/>
+   </g>
+   <path d="m268.8 362.36-9.8 20v5h12v5h5v-5h3v-5h-3v-10h-5v10h-6.8l9.8-20z" fill={color}/>
+   <path d="m252.3 339.86-4.9 10v2.5h6v2.5h2.5v-2.5h1.5v-2.5h-1.5v-5h-2.5v5h-3.4l4.9-10z" fill="#fff"/>
+   <path d="m287.5 414.86 4.9-10v-2.5h-6v-2.5h-2.5v2.5h-1.5v2.5h1.5v5h2.5v-5h3.4l-4.9 10z" fill="#fff"/>
+  </g>
+ </g>
+</svg>

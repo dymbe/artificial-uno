@@ -81,7 +81,10 @@ class Card:
             raise TypeError("Color can only be None for DRAW_FOUR and CHANGE_COLOR cards")
 
 
+@dataclass
 class Hand:
+    cards: list[Card]
+
     def __init__(self, initial_cards: list[Card]):
         self.cards = []
         self.add(initial_cards)
@@ -110,7 +113,10 @@ class Hand:
         return len(self.cards)
 
 
+@dataclass
 class DrawPile:
+    cards: list[Card]
+
     def __init__(self):
         self.cards = []
 
@@ -151,7 +157,9 @@ class DrawPile:
         return len(self.cards)
 
 
+@dataclass
 class DiscardPile:
+    cards: list[Card]
 
     def __init__(self, initial_card: Card):
         self.cards = [initial_card]
