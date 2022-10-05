@@ -10,16 +10,6 @@ from unotypes import *
 app = Flask(__name__)
 
 
-@dataclass(frozen=True)
-class FrontendState:
-    gameWon: bool
-    topCard: Card
-    hands: list[list[Card]]
-    currentAgentIdx: int
-    direction: Literal[-1, 1]
-    scores: list[int]
-
-
 def serialize_state(state: GameState, aliases) -> str:
     def trim_none(x):
         return {k: v for (k, v) in x if v is not None}
