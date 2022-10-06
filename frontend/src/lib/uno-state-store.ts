@@ -16,6 +16,6 @@ export const createUnoStateStore = () => {
     return {
         subscribe,
         reset: () => set(undefined),
-        close: eventSource.close,
+        close: () => eventSource.close(),
     }
 }

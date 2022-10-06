@@ -11,5 +11,6 @@
 <style>
     .hand {
         display: flex;
+        height: 90px;
     }
 </style>
