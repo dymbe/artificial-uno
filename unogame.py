@@ -124,7 +124,7 @@ class UnoGame:
                 self.revealed_hand_idx = (self.current_agent_idx - self.direction) % len(self.hands)
                 self.revealed_hand = deepcopy(self.hands[self.revealed_hand_idx])
 
-                if any(card.stacks_on(self.draw_four_stacked_on) for card in self.revealed_hand if not card.is_wild):
+                if any(card.color == self.draw_four_stacked_on.color for card in self.revealed_hand):
                     self.draw_cards(self.revealed_hand_idx, 4)
                 else:
                     self.draw_cards(self.current_agent_idx, 6)
