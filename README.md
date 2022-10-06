@@ -35,7 +35,7 @@ Try running
 
 `python unoenv.py`
 
-from your virtual environment. It should start a game with one player agent and two random agents.
+from your virtual environment. This should start a game with one player-controlled agent and two agents who make random moves. See their implementation in `agents/textagent.py` and `agents/randomagent.py`.
 
 ## Creating your own agent
 
@@ -43,4 +43,4 @@ To create your own agent you need to create a class that extends the `UnoAgent` 
 
 ### Testing your agent
 
-Create an instance of your custom agent class and pass it into an `UnoEnvironment`. See example in `unoenv.py`.
+Create an instance of your custom agent class and pass it into an `UnoEnvironment`. See the example in the main function of `unoenv.py`.
