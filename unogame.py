@@ -12,6 +12,7 @@ class UnoGame:
         self.scores = agent_amount * [0]
 
         self.state_log = None
+        self.is_initial_state = None
         self.draw_pile = None
         self.hands = None
         self.discard_pile = None
@@ -27,6 +28,8 @@ class UnoGame:
         self.init_round()
 
     def init_round(self):
+        self.is_initial_state = True
+
         self.state_log: list[GameState] = []
 
         self.draw_pile = DrawPile()
@@ -49,10 +52,12 @@ class UnoGame:
         self.revealed_hand: Hand | None = None
 
         self.log_state()
+        self.is_initial_state = False
 
     def gamestate(self) -> GameState:
         return GameState(
             game_won=self.game_won,
+            is_initial_state=self.is_initial_state,
             draw_pile=self.draw_pile,
             hands=self.hands,
             discard_pile=self.discard_pile,
@@ -95,8 +100,9 @@ class UnoGame:
                         self.game_won = True
                     else:
                         self.init_round()
-
-                self.next_turn(increment)
+                        return
+                else:
+                    self.next_turn(increment)
 
             case DrawCard():
                 card_list = self.draw_cards(self.current_agent_idx, 1)

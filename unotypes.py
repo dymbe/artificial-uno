@@ -208,6 +208,7 @@ Action = PlayCard | DrawCard | SkipTurn | AcceptDrawFour | ChallengeDrawFour
 @dataclass(frozen=True)
 class Observation:
     game_won: bool
+    is_initial_state: bool
     agent_idx: int
     top_card: Card
     hand: Hand
@@ -282,6 +283,7 @@ class Observation:
 @dataclass(frozen=True)
 class GameState:
     game_won: bool
+    is_initial_state: bool
     draw_pile: DrawPile
     hands: list[Hand]
     discard_pile: DiscardPile
@@ -308,6 +310,7 @@ class GameState:
 
         return deepcopy(Observation(
             game_won=self.game_won,
+            is_initial_state=self.is_initial_state,
             agent_idx=agent_idx,
             hand=self.hands[agent_idx],
             cards_left=[len(hand) for hand in self.hands],
