@@ -59,4 +59,4 @@ npm install
 npm run dev
 ```
 
-and head to http://localhost:5173. This will by default start a simulation of an UNO-game with 10 agents doing random actions every time you refresh thr browser window. To change the competing agents you have to change the agents inside the `listen`-function inside `gui/unoserver.py`.
+and head to http://localhost:5173. This will by default start a simulation of an UNO-game with 10 agents doing random actions every time you refresh thr browser window. To change the competing agents you have to change the agents inside the `listen`-function inside `gui/unoserver.py` and restart the server.
