@@ -95,7 +95,10 @@ class UnoGame:
                 self.discard_pile.stack(card)
 
                 if len(hand) == 0:
-                    self.scores[self.current_agent_idx] += sum([len(hand) for hand in self.hands])
+                    for hand in self.hands:
+                        for card in hand:
+                            self.scores[self.current_agent_idx] += card.sign.score
+
                     if self.scores[self.current_agent_idx] >= self.winning_score:
                         self.game_won = True
                     else:

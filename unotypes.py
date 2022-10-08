@@ -46,6 +46,40 @@ class Sign(str, Enum):
     def is_number(self):
         return not self.is_wild and not self.is_action
 
+    @property
+    def score(self) -> int:
+        match self:
+            case "ZERO":
+                return 0
+            case "ONE":
+                return 1
+            case "TWO":
+                return 2
+            case "THREE":
+                return 3
+            case "FOUR":
+                return 4
+            case "FIVE":
+                return 5
+            case "SIX":
+                return 6
+            case "SEVEN":
+                return 7
+            case "EIGHT":
+                return 8
+            case "NINE":
+                return 9
+            case "SKIP":
+                return 20
+            case "REVERSE":
+                return 20
+            case "DRAW_TWO":
+                return 20
+            case "DRAW_FOUR":
+                return 50
+            case "CHANGE_COLOR":
+                return 50
+
 
 @dataclass(frozen=True)
 class Card:
