@@ -12,7 +12,7 @@ Uses the standard UNO-rules, see https://en.wikipedia.org/wiki/Uno_(card_game). 
 
 - The aim of the game is to be the first player to score 500 points.
 - Points are achieved by being the first to play all of one's own cards. Points are rewarded based on the amount of cards still held by the other players.
-- It is illegal to stack "draw two" or "draw four" cards to defend against your opponent's "draw two" or "draw four" cards.
+- "Progressive Uno"It is illegal to stack "draw two" or "draw four" cards to defend against your opponent's "draw two" or "draw four" cards.
 - A player may play a "draw four" card only if that player has no cards matching the current color. It is however allowed to lie and play the "draw four" anyway, but the next player may choose to challenge its use. The player who used the "draw four" must privately show their hand to the challenging player in order to demonstrate that they had no prior matching colored cards. If the challenge is successful, then the challenged player must draw four cards instead and play continues with the challenger. Otherwise, the challenger must draw six cards – the four cards they were already required to draw plus two more cards – and lose their turn.
 
 ### How to participate
@@ -44,3 +44,19 @@ To create your own agent you need to create a class that extends the `UnoAgent` 
 ### Testing your agent
 
 Create an instance of your custom agent class and pass it into an `UnoEnvironment`. See the example in the main function of `unoenv.py`.
+
+## GUI
+
+A GUI made with Svelte and Flask can be found inside the `gui`-folder. It can be used to visualize an UNO-game. To start the backend you first have to run
+
+`flask --app gui.unoserver run`
+
+from the root-folder of the project. After this, open a new terminal and run
+
+```
+cd gui
+npm install
+npm run dev
+```
+
+and head to http://localhost:5173. This will by default start a simulation of an UNO-game with 10 agents doing random actions every time you refresh thr browser window. To change the competing agents you have to change the agents inside the `listen`-function inside `gui/unoserver.py`.
