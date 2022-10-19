@@ -105,7 +105,9 @@ class Card:
                 self.sign == card.sign)
 
     def __eq__(self, other):
-        if self.is_wild:
+        if other is None:
+            return False
+        elif self.is_wild:
             return self.sign == other.sign
         else:
             return self.sign == other.sign and self.color == other.color
