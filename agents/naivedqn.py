@@ -53,7 +53,7 @@ def mask_illegal_moves(q_values: np.ndarray, o: Observation) -> np.ndarray:
 class NaiveDqn(UnoAgent):
     def __init__(self, alias):
         super(NaiveDqn, self).__init__(alias)
-        self.model = tf.keras.models.load_model("./agents/models/ContinuedNet__1666230125____12.20avg")
+        self.model = tf.keras.models.load_model("./agents/models/naivedqn")
 
     def get_qs(self, state: np.ndarray):
         return self.model(state.reshape(1, *state.shape))[0].numpy()
