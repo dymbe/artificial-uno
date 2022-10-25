@@ -18,7 +18,7 @@ Uses the standard UNO-rules, see https://en.wikipedia.org/wiki/Uno_(card_game). 
 
 ### How to participate
 
-Create a pull request which adds your agent to the `agent`-folder before 19th of October 23:59.
+Create a pull request which adds your agent to the `agent`-folder.
 
 ## Setup
 
