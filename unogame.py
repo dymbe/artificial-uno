@@ -136,6 +136,9 @@ class UnoGame:
                 self.can_challenge_draw_four = False
                 self.draw_four_stacked_on = None
 
+            case _:
+                raise IllegalMoveException(f"Action <{action}> is invalid")
+
         self.log_state()
 
         self.challenger_idx = None
