@@ -4,7 +4,7 @@ An UNO-game for AIs.
 
 ## Competition
 
-For Knowit Objectnet's internal seminar in Rome. The goal of the competition is to create a program that beats the programs of the other participants in UNO.
+Internal competition for Knowit. The goal of the competition is to create a program that beats the programs of the other participants in UNO.
 
 ### Rules
 
@@ -61,3 +61,9 @@ npm run dev
 ```
 
 and head to http://localhost:5173. This will by default start a simulation of an UNO-game with 10 agents doing random actions every time you refresh thr browser window. To change the competing agents you have to change the agents inside the `listen`-function inside `gui/unoserver.py` and restart the server.
+
+## Winners
+
+| Name           | Agent        | Date     |
+| -------------- | ------------ | -------- |
+| Andreas Petrov | AIDreasAgent | 22.10.22 |
