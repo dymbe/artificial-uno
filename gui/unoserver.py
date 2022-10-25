@@ -1,9 +1,9 @@
 import json
-import time
-
 from flask import Flask, Response
 import dataclasses
-from agents.randomagent import RandomAgent
+from agents.naivedqn import NaiveDqn
+from agents.countingagent import CountingAgent
+from agents.aidreasagent import AIDreasAgent
 from unoenv import UnoEnvironment
 from unotypes import *
 
@@ -13,6 +13,7 @@ app = Flask(__name__)
 def serialize_state(state: GameState, aliases) -> str:
     def trim_none(x):
         return {k: v for (k, v) in x if v is not None}
+
     return json.dumps({
         "gameWon": state.game_won,
         "topCard": dataclasses.asdict(state.discard_pile.top(), dict_factory=trim_none),
@@ -33,13 +34,17 @@ def format_sse(data: str, event=None) -> str:
 
 @app.route("/listen", methods=["GET"])
 def listen():
-    agents = [RandomAgent(f"Player {i}") for i in range(10)]
-    env = UnoEnvironment(agents=agents, winning_score=500)
+    agents = [
+        NaiveDqn("NaiveDqn (Erik)"),
+        AIDreasAgent("AIDreasAgent (Andreas)"),
+        CountingAgent("CountingAgent (Tita)")
+    ]
+
+    env = UnoEnvironment(agents=agents, winning_score=10_000)
 
     def stream():
         for state in env:
             data = serialize_state(state, env.aliases)
             yield format_sse(data)
-            time.sleep(0.5)
 
     return Response(stream(), mimetype="text/event-stream")
